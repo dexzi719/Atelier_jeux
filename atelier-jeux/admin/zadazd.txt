@@ -1,0 +1,26 @@
+<?php
+session_start();
+if (! isset($_SESSION['technicien'])) {
+    header('Location: login.php');
+    exit();
+}
+
+echo "<h2>Tableau de bord</h2>";
+echo "<a href='../index.php'>Accueil</a><br><br>";
+
+if (file_exists("../data/ticket.txt")) {
+    $ticket = file("../data/ticket.txt");
+    echo "<table border='1'>
+            <tr><th>ID</th><th>Date</th><th>Nom</th><th>Email</th><th>Catégorie</th><th>Description</th><th>Statut</th><th>Action</th></tr>";
+    foreach ($ticket as $ligne) {
+        list($id, $date, $nom, $email, $cat, $desc, $statut) = explode(";", trim($ligne));
+        echo "<tr>
+                <td>$id</td><td>$date</td><td>$nom</td><td>$email</td><td>$cat</td><td>$desc</td>
+                <td style='color:" . ($statut == 'ferme' ? 'green' : ($statut == 'en cours' ? 'orange' : 'red')) . "'>$statut</td>
+                <td><a href='ticket.php?id=$id'>Modifier</a></td>
+              </tr>";
+    }
+    echo "</table>";
+} else {
+    echo "<p>Aucun ticket pour le moment.</p>";
+}
